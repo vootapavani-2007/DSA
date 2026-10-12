@@ -1,0 +1,4 @@
+Artificial Intelligence is transforming many industries.
+Machine Learning helps computers learn from data.
+Natural Language Processing helps computers understand human language.
+Data Science is used to analyze large datasets.
