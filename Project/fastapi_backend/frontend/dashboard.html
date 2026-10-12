@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Network Intrusion Detection Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        header {
+            background: #1f3c64;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .welcome {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #1f3c64;
+        }
+
+        .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        #error {
+            color: red;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>AI Network Intrusion Detection</h1>
+
+    <button class="logout" onclick="logout()">
+        Logout
+    </button>
+
+</header>
+
+
+<div class="container">
+
+    <div class="welcome">
+
+        <h2>Welcome to Dashboard</h2>
+
+        <p>
+            Username:
+            <strong id="username">Loading...</strong>
+        </p>
+
+        <p>
+            Role:
+            <strong id="role">Loading...</strong>
+        </p>
+
+    </div>
+
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>System Status</h3>
+            <div class="value">Online</div>
+        </div>
+
+        <div class="card">
+            <h3>Detection Model</h3>
+            <div class="value">Ready</div>
+        </div>
+
+        <div class="card">
+            <h3>Network Status</h3>
+            <div class="value">Active</div>
+        </div>
+
+    </div>
+
+
+    <div id="error"></div>
+
+</div>
+
+
+<script>
+
+async function loadUser() {
+
+    const token = localStorage.getItem("access_token");
+
+    // If token doesn't exist, go back to login
+    if (!token) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "http://127.0.0.1:8000/users/me",
+            {
+                method: "GET",
+
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+
+            document.getElementById("username").innerText =
+                data.username;
+
+            document.getElementById("role").innerText =
+                data.role;
+
+        } else {
+
+            // Token is invalid/expired
+            localStorage.removeItem("access_token");
+
+            window.location.href = "login.html";
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("error").innerText =
+            "Cannot connect to FastAPI backend.";
+
+    }
+}
+
+
+function logout() {
+
+    localStorage.removeItem("access_token");
+
+    window.location.href = "login.html";
+}
+
+
+// Load user when page opens
+loadUser();
+
+</script>
+
+</body>
+</html>
